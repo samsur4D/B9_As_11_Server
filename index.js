@@ -30,13 +30,26 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();---------------commentt must
+// ---------------------------------------------------------------------------------------------------------------------------
+// add collection
+const jobCollection = client.db('jobDB').collection('job')
+
+
+// input form and get the data into the cmd file 
+app.post('/job' , async(req,res)=>{
+    const newJob = req.body;
+    console.log(newJob);
+    const result = await jobCollection.insertOne(newJob);
+    res.send(result);
+})
+// ---------------------------------------------------------------------------------------------------------------------------
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close(); -----------comment mmust
   }
 }
 run().catch(console.dir);
