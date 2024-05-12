@@ -35,6 +35,13 @@ async function run() {
 // add collection
 const jobCollection = client.db('jobDB').collection('job')
 
+// now show data in the all jobs pages in a tablular form
+app.get('/job' , async(req,res)=>{
+     const cursor = jobCollection.find();
+     const result = await cursor.toArray();
+     res.send(result);
+})
+
 
 // input form and get the data into the cmd file 
 app.post('/job' , async(req,res)=>{
@@ -43,6 +50,7 @@ app.post('/job' , async(req,res)=>{
     const result = await jobCollection.insertOne(newJob);
     res.send(result);
 })
+
 // ---------------------------------------------------------------------------------------------------------------------------
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
