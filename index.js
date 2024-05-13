@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000 ;
@@ -33,13 +33,24 @@ async function run() {
     // await client.connect();---------------commentt must
 // ---------------------------------------------------------------------------------------------------------------------------
 // add collection
-const jobCollection = client.db('jobDB').collection('job')
+const jobCollection = client.db('jobDB').collection('job');
+const applyCollection = client.db('jobDB').collection('applys');
 
 // now show data in the all jobs pages in a tablular form
 app.get('/job' , async(req,res)=>{
      const cursor = jobCollection.find();
      const result = await cursor.toArray();
      res.send(result);
+})
+
+app.get('/job/:id' , async(req,res)=>{
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)}
+    const options = {
+          projection: {title: 1 , category: 1 , company: 1 , name: 1 , email: 1 ,  date: 1 , deadline: 1 , applicants: 1 , salary: 1 }
+    }
+    const result = await jobCollection.findOne(query , options);
+    res.send(result)
 })
 
 
@@ -50,6 +61,29 @@ app.post('/job' , async(req,res)=>{
     const result = await jobCollection.insertOne(newJob);
     res.send(result);
 })
+
+// apply operation
+app.get('/applys' , async(req,res)=>{
+    console.log(req.query.email);
+    let query = {};
+    if(req.query?.email){
+        query = {email: req.query.email}
+    }
+     const result = await applyCollection.find().toArray();
+     res.send(result)
+})
+
+
+app.post('/applys' , async(req,res)=>{
+    const apply = req.body;
+    console.log(apply);
+    const result = await applyCollection.insertOne(apply)
+    res.send(result)
+
+
+})
+
+
 
 // ---------------------------------------------------------------------------------------------------------------------------
     // Send a ping to confirm a successful connection
