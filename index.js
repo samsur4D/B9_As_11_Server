@@ -35,6 +35,7 @@ async function run() {
 // add collection
 const jobCollection = client.db('jobDB').collection('job');
 const applyCollection = client.db('jobDB').collection('applys');
+const myCollection = client.db('jobDB').collection('myJobs');
 
 // now show data in the all jobs pages in a tablular form
 app.get('/job' , async(req,res)=>{
@@ -79,9 +80,70 @@ app.post('/applys' , async(req,res)=>{
     console.log(apply);
     const result = await applyCollection.insertOne(apply)
     res.send(result)
-
-
 })
+// -----------------------------------------------------------------
+// myjobs 
+
+
+// update
+app.get('/job/:id' ,  async(req,res)=>{
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)}
+    const result = await jobCollection.findOne(query);
+    res.send(result);
+})
+
+app.put('/job/:id', async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: new ObjectId(id) };
+  const options = { upsert: true };
+  const updatejob = req.body;
+  console.log(updatejob);
+  const job = {
+      $set: {
+          title: updatejob.title,
+          category: updatejob.category,
+          company: updatejob.company,
+          salary: updatejob.salary,
+          date: updatejob.date,
+          applicants: updatejob.applicants,
+          deadline: updatejob.deadline,
+      }
+  }
+  const result = await jobCollection.updateOne(filter, job, options);
+  res.send(result)
+})
+
+// app.put('/job/:id' ,  async(req,res)=>{
+//     const id = req.params.id;
+//     const filter = {_id: new ObjectId(id)};
+//     const options = { upsert:true};
+//     const updatejob = req.body;
+//     console.log(updatejob);
+//     const job = {
+//        $set: {
+//            title: updatejob.title,
+//            category: updatejob.category ,
+//            company: updatejob.company,
+//            salary: updatejob.salary,
+//            date: updatejob.date,
+//            applicants: updatejob.applicants,
+//            deadline: updatejob.deadline,
+//        }
+//     }
+//     const result = await jobCollection.updateOne(filter,job,options);
+//     res.send(result)
+// })
+
+
+app.delete('/job/:id' , async(req,res)=>{
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id) }
+    const result = await  jobCollection.deleteOne(query);
+    res.send(result)
+})
+
+
 
 
 
