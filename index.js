@@ -75,12 +75,25 @@ app.get('/applys' , async(req,res)=>{
 })
 
 
-app.post('/applys' , async(req,res)=>{
-    const apply = req.body;
-    console.log(apply);
-    const result = await applyCollection.insertOne(apply)
-    res.send(result)
-})
+// app.post('/applys' , async(req,res)=>{
+//     const apply = req.body;
+//     console.log(apply);
+//     const result = await applyCollection.insertOne(apply)
+//     res.send(result)
+// })
+app.post('/applys', async (req, res) => {
+  const apply = req.body;
+  console.log(apply);
+  // Increment the number of applicants for the job
+  const filter = { _id: new ObjectId(apply.id) }; // Assuming 'id' in the request body corresponds to the job's _id
+  const update = { $inc: { applicants: 1 } };
+  await jobCollection.updateOne(filter, update);
+
+  // Insert the application into the 'applys' collection
+  const result = await applyCollection.insertOne(apply);
+  res.send(result);
+});
+
 // -----------------------------------------------------------------
 // myjobs 
 
