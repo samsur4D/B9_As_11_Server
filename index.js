@@ -62,7 +62,7 @@ app.post('/job' , async(req,res)=>{
     const result = await jobCollection.insertOne(newJob);
     res.send(result);
 })
-
+// -----------------------------
 // apply operation
 app.get('/applys' , async(req,res)=>{
     console.log(req.query.email);
