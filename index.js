@@ -73,7 +73,7 @@ app.get('/applys' , async(req,res)=>{
      const result = await applyCollection.find().toArray();
      res.send(result)
 })
-// ------------------
+// --------------------
 
 // app.post('/applys' , async(req,res)=>{
 //     const apply = req.body;
